@@ -2,6 +2,9 @@ import os
 import requests
 import urllib.request
 
+# Change this to where your decks are
+decks_path = "C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks"
+
 
 def get_card_image(card_id, filename, extension = ".jpg"):
     response = requests.get("https://db.ygoprodeck.com/api/v5/cardinfo.php?name={}".format(card_id))
@@ -27,9 +30,6 @@ def get_deck_images(ydk_filename):
 
                 card_index += 1
 
-
-# Change this to where your decks are
-decks_path = "C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks"
 
 os.chdir(decks_path)
 
