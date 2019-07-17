@@ -1,12 +1,13 @@
-import json
-import requests
 import os
+import requests
 import urllib.request
 
 
 def get_card_image(card_id, filename, extension = ".jpg"):
     response = requests.get("https://db.ygoprodeck.com/api/v5/cardinfo.php?name={}".format(card_id))
-    card_info = json.loads(response.text)
+    card_info = response.json()
+    del response
+
     image_url = card_info[0]['card_images'][0]['image_url']
 
     urllib.request.urlretrieve(image_url, "{}{}".format(filename, extension))
