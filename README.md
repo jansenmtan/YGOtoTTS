@@ -15,7 +15,7 @@ general yu-gi-oh folder
 |__ ...
 ```
 
-In YGOtoTTS.py: Change `decks_path` to where your decks are located. 
+In retriever.py: Change `decks_path` to where your decks are located. 
 
 On Windows, change "\\" to "/" in the deck path.
 For example, change `C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks` to `C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks`
