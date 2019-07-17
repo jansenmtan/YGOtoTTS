@@ -12,31 +12,11 @@ def get_card_image(card_id, filename, extension = ".jpg"):
     urllib.request.urlretrieve(image_url, "{}{}".format(filename, extension))
 
 
-# Change this to where your decks are
-decks_path = "C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks"
-
-os.chdir(decks_path)
-
-for deck_path in os.listdir():
-    os.chdir(decks_path + deck_path)
-
-    skip = False
-    ydk_filename = ""
-
-    for file in os.listdir():
-        if file.endswith(".ydk"):
-            ydk_filename = file
-        if file.endswith(".jpg") or file.endswith(".png"):
-            skip = True
-            break
-
-    if ydk_filename == "":
-        skip = True
-
-    if skip:
-        continue
-
+def get_deck_images(ydk_filename):
     with open(ydk_filename, "r") as deck_file:
+        os.mkdir("card_images")
+        os.chdir("card_images")
+
         card_index = 0
 
         for line in deck_file:
@@ -45,3 +25,20 @@ for deck_path in os.listdir():
                 get_card_image(stripped, card_index)
 
                 card_index += 1
+
+
+# Change this to where your decks are
+decks_path = "C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks"
+
+os.chdir(decks_path)
+
+for deck_path in os.listdir():
+    os.chdir(decks_path + deck_path)
+
+    # Check if card images already exist
+    if "card_images" in os.listdir():
+        continue
+
+    for file in os.listdir():
+        if file.endswith(".ydk"):
+            get_deck_images(file)
