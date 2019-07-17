@@ -34,7 +34,7 @@ def get_deck_images(ydk_filename):
 os.chdir(decks_path)
 
 for deck_path in os.listdir():
-    os.chdir(decks_path + deck_path)
+    os.chdir(os.path.join(decks_path, deck_path))
 
     # Check if card images already exist
     if "card_images" in os.listdir():
