@@ -143,6 +143,14 @@ def upload_to_imgur(img_path):
     return img_url
 
 
+# TERMINOLOGY:
+#   A "card" is in a "deck"
+#   A "deck" is in a "decklist"
+# Currently, there can be up to 3 decks in a decklist:
+#   main,
+#   extra, and
+#   side.
+
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -166,7 +174,10 @@ for decklist_name in os.listdir():
                 get_decklist_images(decklist_dict)
 
             if "deck_image_urls.txt" not in dir_list:
-                if ["{}.png".format(deck) for deck in [decklist_dict["decks"]]] not in dir_list:
+                # Basically just checks if theres a "main.png" if there's a main deck,
+                #   "side.png" if there's a side deck, etc.
+                imgs_to_check = ["{}.png".format(deck_name) for deck_name in [deck["name"] for deck in decklist_dict["decks"]]]
+                if imgs_to_check not in dir_list: # then create them
                     # Current dir is still card_images
                     for deck in decklist_dict["decks"]:
                         os.chdir(deck["name"])
