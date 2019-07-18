@@ -109,6 +109,40 @@ def make_decklist_dict(ydk_filename, decklist_name):
     return decklist_dict
 
 
+def upload_to_imgur(img_path):
+    """
+    Uploads image from disk to imgur anonymously and returns link to image
+    :param img_path: Path to image on disk
+    :return: img_url - Link to image
+    """
+    client_id = "8b9d897b9a78e50"
+    url = "http://api.imgur.com/3/upload.json"
+    headers = {"Authorization": "Client-ID {}".format(client_id)}
+
+    response = requests.post(
+        url,
+        headers=headers,
+        data={
+            "image": img_path,
+            "type": file,
+        }
+    )
+
+    img_url = ""
+
+    if response:
+        img_url = response.json()["data"]["link"]
+    else:
+        # I don't know how to properly handle errors
+        print("Error trying to upload {}".format(img_path))
+        print("Code {}".format(response.status_code))
+
+    del response
+
+    # If there's an error, just sit and cry
+    return img_url
+
+
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
 
