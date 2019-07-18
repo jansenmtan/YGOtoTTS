@@ -2,20 +2,34 @@
 
 A tool to automate importing Yu-Gi-Oh decks to Tabletop Simulator
 
-This is done by using YGOPRODeck (.ydk) files found at <https://ygoprodeck.com>
+This is done by using YGOPRODeck (.ydk) files found at <https://ygoprodeck.com> and using the API at <https://db.ygoprodeck.com>.
+
+
+## Setup
+
+Get the program at the release page.
 
 Your directory should look like this:
 
 ```
 general yu-gi-oh folder
-|__ sub folder
-|   |__ your favorite deck.ydk
-|__ other sub folder
-|   |__ meta deck.ydk
-|__ ...
+|
+├── sub folder
+|   └── your favorite deck.ydk
+|
+├── other sub folder
+|   └── meta deck.ydk
+|
+├── YGOtoTTS program
+|
+└── ...
 ```
 
-In YGOtoTTS.py: Change `decks_path` to where your decks are located. 
+## Usage
 
-On Windows, change "\\" to "/" in the deck path.
-For example, change `C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks` to `C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks`
+Run the program. The finished deck.png file (found in each subfolder) can be imported into TTS.
+
+
+## Building
+
+All I did was use pyinstaller on YGOtoTTS.py

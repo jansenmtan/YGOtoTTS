@@ -1,6 +1,11 @@
 import os
 import requests
 import urllib.request
+from PIL import Image
+
+
+def ceil_div(a, b):
+    return -(-a // b)
 
 
 def get_card_image(card_id, filename, extension=".jpg"):
@@ -28,6 +33,32 @@ def get_deck_images(ydk_filename):
                 card_index += 1
 
 
+def make_deck_image():
+    # We are in the card_images folder
+
+    list_dir = os.listdir()
+    deck_size = len(list_dir)
+
+    (card_width, card_height) = Image.open(list_dir[0]).size
+    (deck_width, deck_height) = (min(deck_size, 10), ceil_div(deck_size, 10))
+    (deck_image_width, deck_image_height) = (deck_width * card_width, deck_height * card_height)
+
+    deck_image = Image.new('RGB', (deck_image_width, deck_image_height))
+    (x_pos, y_pos) = (0, 0)
+    card_index = 0
+
+    for card in list_dir:
+        card_image = Image.open(card)
+        deck_image.paste(im=card_image, box=(x_pos, y_pos))
+
+        card_index += 1
+        x_pos = (card_index % deck_width) * card_width
+        y_pos = (card_index // deck_height) * card_height
+
+    os.chdir("..")
+    deck_image.save("deck.png")
+
+
 os.chdir(".")
 
 for deck_path in os.listdir():
@@ -40,3 +71,4 @@ for deck_path in os.listdir():
     for file in os.listdir():
         if file.endswith(".ydk"):
             get_deck_images(file)
+            make_deck_image()
