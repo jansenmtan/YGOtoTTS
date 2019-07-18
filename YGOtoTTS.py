@@ -53,7 +53,7 @@ def make_deck_image():
 
         card_index += 1
         x_pos = (card_index % deck_width) * card_width
-        y_pos = (card_index // deck_height) * card_height
+        y_pos = (card_index // deck_width) * card_height
 
     os.chdir("..")
     deck_image.save("deck.png")
@@ -61,14 +61,18 @@ def make_deck_image():
 
 os.chdir(".")
 
-for deck_path in os.listdir():
-    os.chdir(deck_path)
+# Is the absolute path of the program/.py file
+decks_path = os.path.dirname(os.path.realpath(__file__))
 
-    # Check if card images already exist
-    if "card_images" in os.listdir():
-        continue
+for deck_path in os.listdir():
+    os.chdir(decks_path + deck_path)
 
     for file in os.listdir():
         if file.endswith(".ydk"):
-            get_deck_images(file)
-            make_deck_image()
+            if "card_images" not in os.listdir():
+                get_deck_images(file)
+                os.chdir("..")
+
+            if "deck.png" not in os.listdir():
+                os.chdir("card_images")
+                make_deck_image()
