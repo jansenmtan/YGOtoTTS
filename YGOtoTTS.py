@@ -65,7 +65,7 @@ os.chdir(".")
 decks_path = os.path.dirname(os.path.realpath(__file__))
 
 for deck_path in os.listdir():
-    os.chdir(decks_path + deck_path)
+    os.chdir(os.path.join(decks_path, deck_path))
 
     for file in os.listdir():
         if file.endswith(".ydk"):
