@@ -71,11 +71,11 @@ def make_deck_image(deck_name):
 
 
 def make_decklist_dict(ydk_filename, decklist_name):
-    decklist_list = []
+    deck_list = []
 
     with open(ydk_filename, "r") as ydk_file:
         deck_name = ""
-        deck_list = []
+        card_list = []
 
         for line in ydk_file:
             stripped = line.rstrip()
@@ -86,24 +86,24 @@ def make_decklist_dict(ydk_filename, decklist_name):
             if not stripped.isnumeric():
                 # Stripped must be a separate deck (main, extra, side, etc)
 
-                if len(deck_list) != 0:
+                if len(card_list) != 0:
                     deck_dict = {
                         "name": deck_name,
-                        "cards": deck_list
+                        "cards": card_list
                     }
 
-                    decklist_list.append(deck_dict)
+                    deck_list.append(deck_dict)
 
                 deck_name = stripped[1:]
-                deck_list = []
+                card_list = []
 
             else:
                 # Stripped must be a card id
-                deck_list.append(get_card_info(stripped))
+                card_list.append(get_card_info(stripped))
 
     decklist_dict = {
         "name": decklist_name,
-        "decks": decklist_list
+        "decks": deck_list
     }
 
     return decklist_dict
@@ -152,24 +152,26 @@ for decklist_name in os.listdir():
     decklist_path = os.path.join(decklists_path, decklist_name)
     os.chdir(decklist_path)
 
-    list_dir = os.listdir()
-    list_dir_exts = [os.path.splitext(filename)[1] for filename in list_dir]
+    dir_list = os.listdir()
+    dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
-    for file in list_dir:
+    for file in dir_list:
         if file.endswith(".ydk"):
             decklist_dict = make_decklist_dict(file, decklist_name)
 
-            if "card_images" not in list_dir:
+            if "card_images" not in dir_list:
                 os.mkdir("card_images")
                 os.chdir("card_images")
 
                 get_decklist_images(decklist_dict)
 
-            if ".png" not in list_dir_exts:
-                # Current dir is still card_images
-                for deck in decklist_dict["decks"]:
-                    os.chdir(deck["name"])
-                    make_deck_image(deck["name"])
+            if "deck_image_urls.txt" not in dir_list:
+                if ["{}.png".format(deck) for deck in [decklist_dict["decks"]]] not in dir_list:
+                    # Current dir is still card_images
+                    for deck in decklist_dict["decks"]:
+                        os.chdir(deck["name"])
+                        make_deck_image(deck["name"])
 
             os.chdir(decklist_path)
 
+# back_img_url = "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/"
