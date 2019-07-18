@@ -1,46 +1,57 @@
+# TODO: Implement making a TTS saved object .json file
+
 import os
 import requests
 import urllib.request
 from PIL import Image
+import json
 
 
 def ceil_div(a, b):
     return -(-a // b)
 
 
-def get_card_image(card_id, filename, extension=".jpg"):
+def get_card_info(card_id):
     response = requests.get("https://db.ygoprodeck.com/api/v5/cardinfo.php?name={}".format(card_id))
     card_info = response.json()
     del response
 
-    image_url = card_info[0]['card_images'][0]['image_url']
+    # There's only one item in this list
+    return card_info[0]
+
+
+def get_card_image(card_info, filename, extension=".jpg"):
+    image_url = card_info['card_images'][0]['image_url']
 
     urllib.request.urlretrieve(image_url, "{}{}".format(filename, extension))
 
 
-def get_deck_images(ydk_filename):
-    with open(ydk_filename, "r") as deck_file:
-        os.mkdir("card_images")
-        os.chdir("card_images")
+def get_decklist_images(decklist_dict, extension=".jpg"):
+    # Current dir is card_images
+    card_index = 0
 
-        card_index = 0
+    for deck in decklist_dict["decks"]:
+        # Current dir is card_images
+        os.mkdir(deck["name"])
+        os.chdir(deck["name"])
 
-        for line in deck_file:
-            stripped = line.rstrip()
-            if stripped.isnumeric():
-                get_card_image(stripped, card_index)
+        for card in deck["cards"]:
+            get_card_image(card, "{}".format(card_index), extension=extension)
+            card_index += 1
 
-                card_index += 1
+        os.chdir("..")
 
 
-def make_deck_image():
-    # We are in the card_images folder
+def make_deck_image(deck_name):
+    # Current dir the deck images folder
+
+    filename = "{}.png".format(deck_name)
 
     list_dir = os.listdir()
     deck_size = len(list_dir)
 
     (card_width, card_height) = Image.open(list_dir[0]).size
-    (deck_width, deck_height) = (min(deck_size, 10), ceil_div(deck_size, 10))
+    (deck_width, deck_height) = (min(deck_size, 10), min(ceil_div(deck_size, 10), 7))
     (deck_image_width, deck_image_height) = (deck_width * card_width, deck_height * card_height)
 
     deck_image = Image.new('RGB', (deck_image_width, deck_image_height))
@@ -55,24 +66,76 @@ def make_deck_image():
         x_pos = (card_index % deck_width) * card_width
         y_pos = (card_index // deck_width) * card_height
 
-    os.chdir("..")
-    deck_image.save("deck.png")
+    os.chdir("../..")
+    deck_image.save(filename)
 
 
-os.chdir(".")
+def make_decklist_dict(ydk_filename, decklist_name):
+    decklist_list = []
+
+    with open(ydk_filename, "r") as ydk_file:
+        deck_name = ""
+        deck_list = []
+
+        for line in ydk_file:
+            stripped = line.rstrip()
+
+            if "created by" in stripped:
+                continue
+
+            if not stripped.isnumeric():
+                # Stripped must be a separate deck (main, extra, side, etc)
+
+                if len(deck_list) != 0:
+                    deck_dict = {
+                        "name": deck_name,
+                        "cards": deck_list
+                    }
+
+                    decklist_list.append(deck_dict)
+
+                deck_name = stripped[1:]
+                deck_list = []
+
+            else:
+                # Stripped must be a card id
+                deck_list.append(get_card_info(stripped))
+
+    decklist_dict = {
+        "name": decklist_name,
+        "decks": decklist_list
+    }
+
+    return decklist_dict
+
 
 # Is the absolute path of the program/.py file
-decks_path = os.path.dirname(os.path.realpath(__file__))
+decklists_path = os.path.dirname(os.path.realpath(__file__))
 
-for deck_path in os.listdir():
-    os.chdir(os.path.join(decks_path, deck_path))
+os.chdir(decklists_path)
 
-    for file in os.listdir():
+for decklist_name in os.listdir():
+    decklist_path = os.path.join(decklists_path, decklist_name)
+    os.chdir(decklist_path)
+
+    list_dir = os.listdir()
+    list_dir_exts = [os.path.splitext(filename)[1] for filename in list_dir]
+
+    for file in list_dir:
         if file.endswith(".ydk"):
-            if "card_images" not in os.listdir():
-                get_deck_images(file)
-                os.chdir("..")
+            decklist_dict = make_decklist_dict(file, decklist_name)
 
-            if "deck.png" not in os.listdir():
+            if "card_images" not in list_dir:
+                os.mkdir("card_images")
                 os.chdir("card_images")
-                make_deck_image()
+
+                get_decklist_images(decklist_dict)
+
+            if ".png" not in list_dir_exts:
+                # Current dir is still card_images
+                for deck in decklist_dict["decks"]:
+                    os.chdir(deck["name"])
+                    make_deck_image(deck["name"])
+
+            os.chdir(decklist_path)
+
