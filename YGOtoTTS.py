@@ -27,11 +27,11 @@ def get_card_image(card_info, filename, extension=".jpg"):
 
 
 def get_decklist_images(decklist_dict, extension=".jpg"):
-    # Current dir is card_images
+    # Current dir is images
     card_index = 0
 
     for deck in decklist_dict["decks"]:
-        # Current dir is card_images
+        # Current dir is images
         os.mkdir(deck["name"])
         os.chdir(deck["name"])
 
@@ -42,10 +42,8 @@ def get_decklist_images(decklist_dict, extension=".jpg"):
         os.chdir("..")
 
 
-def make_deck_image(deck_name):
-    # Current dir the deck images folder
-
-    filename = "{}.png".format(deck_name)
+def make_deck_image():
+    # Current dir is the deck images folder
 
     list_dir = os.listdir()
     deck_size = len(list_dir)
@@ -66,11 +64,12 @@ def make_deck_image(deck_name):
         x_pos = (card_index % deck_width) * card_width
         y_pos = (card_index // deck_width) * card_height
 
-    os.chdir("../..")
-    deck_image.save(filename)
+    return deck_image
 
 
 def make_decklist_dict(ydk_filename, decklist_name):
+    print("Getting info for {}...".format(decklist_name))
+
     deck_list = []
 
     with open(ydk_filename, "r") as ydk_file:
@@ -106,10 +105,12 @@ def make_decklist_dict(ydk_filename, decklist_name):
         "decks": deck_list
     }
 
+    print("Done!")
+
     return decklist_dict
 
 
-def upload_to_imgur(img_path):
+def get_imgur_link(img_path):
     """
     Uploads image from disk to imgur anonymously and returns link to image
     :param img_path: Path to image on disk
@@ -152,7 +153,8 @@ def upload_to_imgur(img_path):
 #   side.
 
 # Is the absolute path of the program/.py file
-decklists_path = os.path.dirname(os.path.realpath(__file__))
+# decklists_path = os.path.dirname(os.path.realpath(__file__))
+decklists_path = "C:/Users/Jansen/Documents/Yu-Gi-Oh/Decks"
 
 os.chdir(decklists_path)
 
@@ -167,21 +169,32 @@ for decklist_name in os.listdir():
         if file.endswith(".ydk"):
             decklist_dict = make_decklist_dict(file, decklist_name)
 
-            if "card_images" not in dir_list:
-                os.mkdir("card_images")
-                os.chdir("card_images")
-
+            if "images" not in dir_list:
+                os.mkdir("images")
+                os.chdir("images")
                 get_decklist_images(decklist_dict)
 
+            else:
+                os.chdir("images")
+
             if "deck_image_urls.txt" not in dir_list:
+                # Current dir is still images
+
                 # Basically just checks if theres a "main.png" if there's a main deck,
                 #   "side.png" if there's a side deck, etc.
-                imgs_to_check = ["{}.png".format(deck_name) for deck_name in [deck["name"] for deck in decklist_dict["decks"]]]
-                if imgs_to_check not in dir_list: # then create them
-                    # Current dir is still card_images
+                png_imgs = ["{}.png".format(deck_name) for deck_name in [deck["name"] for deck in decklist_dict["decks"]]]
+                if png_imgs not in os.listdir():
+                    # then create them
                     for deck in decklist_dict["decks"]:
                         os.chdir(deck["name"])
-                        make_deck_image(deck["name"])
+                        deck_image = make_deck_image()
+                        os.chdir("..")
+                        deck_image.save("{}.png".format(deck["name"]))
+
+                with open("deck_image_urls.txt", "w") as deck_image_urls:
+                    for img in png_imgs:
+                        deck_image_urls.writelines(get_imgur_link(img))
+
 
             os.chdir(decklist_path)
 
