@@ -27,9 +27,16 @@ general yu-gi-oh folder
 
 ## Usage
 
-Run the program. The finished deck.png file (found in each subfolder) can be imported into TTS.
+Run the program. The finished .json file (found in each subfolder) can be imported into TTS.
 
 
 ## Building
 
-All I did was use pyinstaller on YGOtoTTS.py
+I used pyinstaller to build an executable.
+
+See the [pyinstaller quickstart](https://www.pyinstaller.org).
+
+I recommend using the flag `-F`
+```
+pyinstaller -F YGOtoTTS.py
+```
