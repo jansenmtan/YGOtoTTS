@@ -227,14 +227,13 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
-decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 os.chdir(decklists_path)
 
-# TODO: Get only directories/folders, not files
 # could implement an asynchronous process to only have to iterate through
 #   the deck info once, but I am ignorant
-for decklist_name in os.listdir():
+decklists = [folder for folder in os.listdir() if os.path.isdir(folder)]
+for decklist_name in decklists:
     decklist_path = os.path.join(decklists_path, decklist_name)
     os.chdir(decklist_path)
 
