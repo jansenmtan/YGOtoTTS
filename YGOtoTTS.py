@@ -1,3 +1,5 @@
+# TODO: Have decks less than 2 cards appear as a "Card" object.
+#   (Shouldn't happen often)
 import os
 import requests
 import urllib.request
@@ -144,7 +146,55 @@ def get_imgur_link(img_path):
 
 
 def make_tts_object(decklist_dict, img_urls):
-    object_template = {
+    decks = []
+    for deck_idx, deck in enumerate(decklist_dict["decks"]):
+        deck_id = deck_idx + 1
+        deck_ids = [100*deck_id + card_idx for card_idx in range(len(deck["cards"]))]
+        cards = [{
+            "Name": "Card",
+            "Transform": {
+                "posX": 0.0,
+                "posY": 0.0,
+                "posZ": -6.50,
+                "rotX": 0.0,
+                "rotY": 0.0,
+                "rotZ": 0.0,
+                "scaleX": 1.0,
+                "scaleY": 1.0,
+                "scaleZ": 1.0
+            },
+            "Nickname": card["name"],
+            "Description": card["desc"],
+            "CardID": deck_ids[card_idx]
+        } for card_idx, card in enumerate(deck["cards"])]
+
+        decks.append({
+            "Name": "DeckCustom",
+            "Transform": {
+                "posX": 0.0,
+                "posY": 0.0,
+                "posZ": -6.50,
+                "rotX": 0.0,
+                "rotY": 0.0,
+                "rotZ": 0.0,
+                "scaleX": 1.0,
+                "scaleY": 1.0,
+                "scaleZ": 1.0
+            },
+            "Nickname": "{} {} Deck".format(decklist_dict["name"], deck["name"].capitalize()),
+            "DeckIDs": deck_ids,
+            "CustomDeck": {
+                str(deck_id): {
+                    "FaceURL": img_urls[deck_idx],
+                    # Image of the back of card found in another mod:
+                    "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/"
+                }
+            },
+            "ContainedObjects": cards
+        })
+
+    decklist_tts_obj = {
+        "Name": "Bag",
         "Transform": {
             "posX": 0.0,
             "posY": 0.0,
@@ -156,55 +206,9 @@ def make_tts_object(decklist_dict, img_urls):
             "scaleY": 1.0,
             "scaleZ": 1.0
         },
-        "Nickname": "",
-        "Description": "",
-    }
-
-    card_template = object_template.update({
-        "Name": "Card",
-        "CardID": 100
-    })
-
-    deck_template = object_template.update({
-        "Name": "DeckCustom",
-        "DeckIDs": [],  # cardIDs go here
-        "CustomDeck": {},  # image urls go here
-        "ContainedObjects": []  # cards go here
-    })
-
-    decklist_template = object_template.update({
-        "Name": "Bag",
-        "ContainedObjects": [],  # decks go here
-
-    })
-
-    decks = []
-    for deck_idx, deck in enumerate(decklist_dict["decks"]):
-        deck_id = deck_idx + 1
-        deck_ids = [100*deck_id + card_idx for card_idx in range(len(deck["cards"]))]
-        cards = [card_template.update({
-            "Nickname": card["name"],
-            "Description": card["desc"],
-            "CardID": deck_ids[card_idx]
-        }) for card_idx, card in enumerate(deck["cards"])]
-
-        decks.append(deck_template.update({
-            "Nickname": "{} {} Deck".format(decklist_dict["name"], deck["name"].capitalize()),
-            "DeckIDs": deck_ids,
-            "CustomDeck": {
-                str(deck_id): {
-                    "FaceURL": img_urls[deck_idx],
-                    # Image of the back of card found in another mod:
-                    "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/"
-                }
-            },
-            "ContainedObjects": cards
-        }))
-
-    decklist_tts_obj = decklist_template.update({
         "Nickname": decklist_dict["name"],
         "ContainedObjects": decks
-    })
+    }
 
     tts_object = {
         "ObjectStates": [decklist_tts_obj]
@@ -223,6 +227,7 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
+decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 os.chdir(decklists_path)
 
@@ -277,7 +282,7 @@ for decklist_name in os.listdir():
                     deck_image_urls = image_url_file.read().split("\n")
 
                 with open(tts_obj_path, "w") as tts_json:
-                    json.dump(make_tts_object(decklist_dict, deck_image_urls), tts_json)
+                    json.dump(make_tts_object(decklist_dict, deck_image_urls), tts_json, indent="  ")
 
             os.chdir(decklist_path)
 
