@@ -163,8 +163,9 @@ def get_imgur_link(img_path):
 def make_tts_object(decklist_dict, img_urls):
     decks = []
     for deck_idx, deck in enumerate(decklist_dict["decks"]):
+        deck_size = len(deck["cards"])
         deck_id = deck_idx + 1
-        deck_ids = [100*deck_id + card_idx for card_idx in range(len(deck["cards"]))]
+        deck_ids = [100*deck_id + card_idx for card_idx in range(deck_size)]
         cards = [{
             "Name": "Card",
             "Transform": {
@@ -202,7 +203,9 @@ def make_tts_object(decklist_dict, img_urls):
                 str(deck_id): {
                     "FaceURL": img_urls[deck_idx],
                     # Image of the back of card found in another mod:
-                    "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/"
+                    "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
+                    "NumWidth": min(deck_size, 10),
+                    "NumHeight": min(ceil_div(deck_size, 10), 7),
                 }
             },
             "ContainedObjects": cards

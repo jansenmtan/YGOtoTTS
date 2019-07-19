@@ -29,6 +29,8 @@ general yu-gi-oh folder
 
 Run the program. The finished .json file (found in each subfolder) can be imported into TTS.
 
+If the image quality is too low, there is an `images` folder in each subfolder which each contain the deck png files.
+They can replace the default imgur link.
 
 ## Building
 
@@ -36,7 +38,7 @@ I used pyinstaller to build an executable.
 
 See the [pyinstaller quickstart](https://www.pyinstaller.org).
 
-I recommend using the flag `-F`
+I recommend using the flag `-F`. For example,
 ```
 pyinstaller -F YGOtoTTS.py
 ```
