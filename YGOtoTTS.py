@@ -260,7 +260,15 @@ for decklist_name in decklists:
 
     for file in dir_list:
         if file.endswith(".ydk"):
-            decklist_dict = make_decklist_dict(file, decklist_name)
+            decklist_info_name = "decklist_info.json"
+            if decklist_info_name not in dir_list:
+                decklist_dict = make_decklist_dict(file, decklist_name)
+                with open(decklist_info_name, "w") as decklist_info:
+                    json.dump(decklist_dict, decklist_info, indent="  ")
+
+            else:
+                with open(decklist_info_name, "r") as decklist_info:
+                    decklist_dict = json.load(decklist_info_name)
 
             if "images" not in dir_list:
                 os.mkdir("images")
