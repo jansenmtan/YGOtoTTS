@@ -21,6 +21,7 @@ import urllib.request
 from PIL import Image
 import json
 from base64 import b64encode
+import sys
 
 
 def ceil_div(a, b):
@@ -149,7 +150,7 @@ def get_imgur_link(img_path):
     img_url = ""
 
     if response:
-        img_url = "{}\n".format(response.json()["data"]["link"])
+        img_url = "{}/n".format(response.json()["data"]["link"])
     else:
         # I don't know how to properly handle errors
         print(response.json()["data"]["error"])
@@ -246,6 +247,15 @@ def make_tts_object(decklist_dict, img_urls):
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
 
+saved_objects_path = ""
+if sys.platform == "win32":
+    saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
+else:
+    err_msg = "This platform is not supported. Please create an issue at https://github.com/jansenmtan/YGOtoTTS/issues.\n"
+    print(err_msg)
+    input("Press enter to continue.")
+    raise Exception(err_msg)
+
 os.chdir(decklists_path)
 
 # could implement an asynchronous process to only have to iterate through
@@ -299,15 +309,16 @@ for decklist_name in decklists:
                         img_path = os.path.join("images", img)
                         image_url_file.writelines(get_imgur_link(img_path))
 
-            os.chdir(decklist_path)
+            os.chdir(saved_objects_path)
 
             tts_obj_path = "{}.json".format(decklist_name)
-            if tts_obj_path not in dir_list:
-                with open("deck_image_urls.txt", "r") as image_url_file:
-                    deck_image_urls = image_url_file.read().split("\n")
+            if tts_obj_path not in os.listdir():
+                with open(os.path.join(decklist_path, "deck_image_urls.txt"), "r") as image_url_file:
+                    deck_image_urls = image_url_file.read().split("/n")
 
+                tts_object = make_tts_object(decklist_dict, deck_image_urls)
                 with open(tts_obj_path, "w") as tts_json:
-                    json.dump(make_tts_object(decklist_dict, deck_image_urls), tts_json, indent="  ")
+                    json.dump(tts_object, tts_json, indent="  ")
 
             os.chdir(decklist_path)
 
