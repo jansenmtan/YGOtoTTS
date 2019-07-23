@@ -150,7 +150,7 @@ def get_imgur_link(img_path):
     img_url = ""
 
     if response:
-        img_url = "{}/n".format(response.json()["data"]["link"])
+        img_url = "{}\n".format(response.json()["data"]["link"])
     else:
         # I don't know how to properly handle errors
         print(response.json()["data"]["error"])
@@ -162,6 +162,18 @@ def get_imgur_link(img_path):
 
 
 def make_tts_object(decklist_dict, img_urls):
+    transform_base = {
+        "posX": 0.0,
+        "posY": 0.0,
+        "posZ": -6.50,
+        "rotX": 0.0,
+        "rotY": 0.0,
+        "rotZ": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "scaleZ": 1.0
+    }
+
     decks = []
     for deck_idx, deck in enumerate(decklist_dict["decks"]):
         deck_size = len(deck["cards"])
@@ -169,17 +181,7 @@ def make_tts_object(decklist_dict, img_urls):
         deck_ids = [100*deck_id + card_idx for card_idx in range(deck_size)]
         cards = [{
             "Name": "Card",
-            "Transform": {
-                "posX": 0.0,
-                "posY": 0.0,
-                "posZ": -6.50,
-                "rotX": 0.0,
-                "rotY": 0.0,
-                "rotZ": 0.0,
-                "scaleX": 1.0,
-                "scaleY": 1.0,
-                "scaleZ": 1.0
-            },
+            "Transform": transform_base,
             "Nickname": card["name"],
             "Description": card["desc"],
             "CardID": deck_ids[card_idx]
@@ -187,17 +189,7 @@ def make_tts_object(decklist_dict, img_urls):
 
         decks.append({
             "Name": "DeckCustom",
-            "Transform": {
-                "posX": 0.0,
-                "posY": 0.0,
-                "posZ": -6.50,
-                "rotX": 0.0,
-                "rotY": 0.0,
-                "rotZ": 0.0,
-                "scaleX": 1.0,
-                "scaleY": 1.0,
-                "scaleZ": 1.0
-            },
+            "Transform": transform_base,
             "Nickname": "{} {} Deck".format(decklist_dict["name"], deck["name"].capitalize()),
             "DeckIDs": deck_ids,
             "CustomDeck": {
@@ -214,17 +206,7 @@ def make_tts_object(decklist_dict, img_urls):
 
     decklist_tts_obj = {
         "Name": "Bag",
-        "Transform": {
-            "posX": 0.0,
-            "posY": 0.0,
-            "posZ": -6.50,
-            "rotX": 0.0,
-            "rotY": 0.0,
-            "rotZ": 0.0,
-            "scaleX": 1.0,
-            "scaleY": 1.0,
-            "scaleZ": 1.0
-        },
+        "Transform": transform_base,
         "Nickname": decklist_dict["name"],
         "ContainedObjects": decks
     }
@@ -278,7 +260,7 @@ for decklist_name in decklists:
 
             else:
                 with open(decklist_info_name, "r") as decklist_info:
-                    decklist_dict = json.load(decklist_info_name)
+                    decklist_dict = json.load(decklist_info)
 
             if "images" not in dir_list:
                 os.mkdir("images")
@@ -314,7 +296,7 @@ for decklist_name in decklists:
             tts_obj_path = "{}.json".format(decklist_name)
             if tts_obj_path not in os.listdir():
                 with open(os.path.join(decklist_path, "deck_image_urls.txt"), "r") as image_url_file:
-                    deck_image_urls = image_url_file.read().split("/n")
+                    deck_image_urls = image_url_file.read().split("\n")
 
                 tts_object = make_tts_object(decklist_dict, deck_image_urls)
                 with open(tts_obj_path, "w") as tts_json:
