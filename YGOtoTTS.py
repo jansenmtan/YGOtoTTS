@@ -243,12 +243,12 @@ os.chdir(decklists_path)
 
 # could implement an asynchronous process to only have to iterate through
 #   the deck info once, but I am ignorant
-decklists = [folder for folder in os.listdir() if os.path.isdir(folder)]
+decklists = [folder for folder in os.listdir(".") if os.path.isdir(folder)]
 for decklist_name in decklists:
     decklist_path = os.path.join(decklists_path, decklist_name)
     os.chdir(decklist_path)
 
-    dir_list = os.listdir()
+    dir_list = os.listdir(".")
     dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
     for file in dir_list:
@@ -277,7 +277,7 @@ for decklist_name in decklists:
                 # Basically just checks if theres a "main.png" if there's a main deck,
                 #   "side.png" if there's a side deck, etc.
                 png_imgs = ["{}.png".format(deck_name) for deck_name in [deck["name"] for deck in decklist_dict["decks"]]]
-                if png_imgs not in os.listdir():
+                if png_imgs not in os.listdir("."):
                     # then create them
                     for deck in decklist_dict["decks"]:
                         os.chdir(deck["name"])
@@ -295,7 +295,7 @@ for decklist_name in decklists:
             os.chdir(saved_objects_path)
 
             tts_obj_path = "{}.json".format(decklist_name)
-            if tts_obj_path not in os.listdir():
+            if tts_obj_path not in os.listdir("."):
                 with open(os.path.join(decklist_path, "deck_image_urls.txt"), "r") as image_url_file:
                     deck_image_urls = image_url_file.read().split("\n")
 
@@ -304,4 +304,3 @@ for decklist_name in decklists:
                     json.dump(tts_object, tts_json, indent="  ")
 
             os.chdir(decklist_path)
-
