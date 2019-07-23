@@ -70,16 +70,14 @@ def make_deck_image():
     (deck_image_width, deck_image_height) = (deck_width * card_width, deck_height * card_height)
 
     deck_image = Image.new('RGB', (deck_image_width, deck_image_height))
-    (x_pos, y_pos) = (0, 0)
-    card_index = 0
 
-    for card in list_dir:
-        card_image = Image.open(card)
-        deck_image.paste(im=card_image, box=(x_pos, y_pos))
-
-        card_index += 1
+    for card_index in range(deck_size):
         x_pos = (card_index % deck_width) * card_width
         y_pos = (card_index // deck_width) * card_height
+
+        card_image = Image.open("{}.jpg".format(card_index))
+        deck_image.paste(im=card_image, box=(x_pos, y_pos))
+
 
     return deck_image
 
