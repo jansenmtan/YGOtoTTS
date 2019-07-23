@@ -271,26 +271,29 @@ for decklist_name in decklists:
             else:
                 os.chdir("images")
 
-            if "deck_image_urls.txt" not in dir_list:
+            if "deck_image_urls.txt" not in os.listdir("."):
                 # Current dir is still images
+
+                deck_image_ext = ".jpg"
 
                 # Basically just checks if theres a "main.*" if there's a main deck,
                 #   "side.*" if there's a side deck, etc.
                 deck_names = [deck["name"] for deck in decklist_dict["decks"]]
-                if deck_names == [os.path.splitext(filename)[0] for filename in os.listdir(".")]:
+                if deck_names != [os.path.splitext(filename)[0] for filename in os.listdir(".")]:
                     # then create them
                     for deck in decklist_dict["decks"]:
                         os.chdir(deck["name"])
                         deck_image = make_deck_image()
                         os.chdir("..")
                         deck_image.save("{}.png".format(deck["name"]))
+                        deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=65, optimize=True)
 
-                os.chdir(decklist_path)
+                os.chdir(os.path.join(decklist_path, "images"))
 
+                deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
                 with open("deck_image_urls.txt", "w") as image_url_file:
-                    for img in os.listdir(os.path.join(decklist_path, "images")):
-                        img_path = os.path.join("images", img)
-                        image_url_file.writelines(get_imgur_link(img_path))
+                    for img in deck_image_paths:
+                        image_url_file.writelines(get_imgur_link(img))
 
             os.chdir(saved_objects_path)
 
