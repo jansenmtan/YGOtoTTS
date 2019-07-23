@@ -62,22 +62,25 @@ def get_decklist_images(decklist_dict, extension=".jpg"):
 def make_deck_image():
     # Current dir is the deck images folder
 
-    list_dir = os.listdir(".")
+    list_dir = [os.path.splitext(path)[0] for path in os.listdir(".")]
+    list_dir.sort(key=int)
     deck_size = len(list_dir)
 
-    (card_width, card_height) = Image.open(list_dir[0]).size
+    (card_width, card_height) = Image.open("{}.jpg".format(list_dir[0])).size
     (deck_width, deck_height) = (min(deck_size, 10), min(ceil_div(deck_size, 10), 7))
     (deck_image_width, deck_image_height) = (deck_width * card_width, deck_height * card_height)
 
     deck_image = Image.new('RGB', (deck_image_width, deck_image_height))
+    card_index = 0
 
-    for card_index in range(deck_size):
+    for card in list_dir:
         x_pos = (card_index % deck_width) * card_width
         y_pos = (card_index // deck_width) * card_height
 
-        card_image = Image.open("{}.jpg".format(card_index))
+        card_image = Image.open("{}.jpg".format(card))
         deck_image.paste(im=card_image, box=(x_pos, y_pos))
 
+        card_index += 1
 
     return deck_image
 
