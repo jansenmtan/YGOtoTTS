@@ -27,7 +27,7 @@ general yu-gi-oh folder
 
 ## Usage
 
-Run the program. The finished .json file (found in each subfolder) can be imported into TTS.
+Run the program. The deck is ready to spawn in-game in Tabletop Simulator.
 
 If the image quality is too low, there is an `images` folder in each subfolder which each contain the deck png files.
 They can replace the default imgur link.
