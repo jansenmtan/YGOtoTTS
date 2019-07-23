@@ -299,7 +299,7 @@ for decklist_name in decklists:
 
             tts_obj_path = "{}.json".format(decklist_name)
             if tts_obj_path not in os.listdir("."):
-                with open(os.path.join(decklist_path, "deck_image_urls.txt"), "r") as image_url_file:
+                with open(os.path.join(decklist_path, "images/deck_image_urls.txt"), "r") as image_url_file:
                     deck_image_urls = image_url_file.read().split("\n")
 
                 tts_object = make_tts_object(decklist_dict, deck_image_urls)
