@@ -247,7 +247,7 @@ for decklist_name in decklists:
     dir_list = os.listdir(".")
     dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
-    print(decklist_name, ": ")
+    print("{}: ".format(decklist_name))
     for file in dir_list:
         if file.endswith(".ydk"):
             decklist_info_name = "decklist_info.json"
@@ -308,5 +308,6 @@ for decklist_name in decklists:
                     json.dump(tts_object, tts_json, indent="  ")
 
             os.chdir(decklist_path)
+            print("\tDone.\n")
 
 input("Press enter to exit.")
