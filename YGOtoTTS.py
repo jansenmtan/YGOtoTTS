@@ -86,8 +86,6 @@ def make_deck_image():
 
 
 def make_decklist_dict(ydk_filename, decklist_name):
-    print("Getting info for {}...".format(decklist_name))
-
     decklist = []
 
     with open(ydk_filename, "r") as ydk_file:
@@ -122,8 +120,6 @@ def make_decklist_dict(ydk_filename, decklist_name):
         "name": decklist_name,
         "decks": decklist
     }
-
-    print("Done!")
 
     return decklist_dict
 
@@ -251,10 +247,12 @@ for decklist_name in decklists:
     dir_list = os.listdir(".")
     dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
+    print(decklist_name, ": ")
     for file in dir_list:
         if file.endswith(".ydk"):
             decklist_info_name = "decklist_info.json"
             if decklist_info_name not in dir_list:
+                print("\tGetting decklist info...".format(decklist_name))
                 decklist_dict = make_decklist_dict(file, decklist_name)
                 with open(decklist_info_name, "w") as decklist_info:
                     json.dump(decklist_dict, decklist_info, indent="  ")
@@ -264,6 +262,7 @@ for decklist_name in decklists:
                     decklist_dict = json.load(decklist_info)
 
             if "images" not in dir_list:
+                print("\tMaking images...")
                 os.mkdir("images")
                 os.chdir("images")
                 get_decklist_images(decklist_dict)
@@ -272,8 +271,9 @@ for decklist_name in decklists:
                 os.chdir("images")
 
             if "deck_image_urls.txt" not in os.listdir("."):
-                # Current dir is still images
+                print("\tUploading images to imgur...")
 
+                # Current dir is still images
                 deck_image_ext = ".jpg"
 
                 # Basically just checks if theres a "main.*" if there's a main deck,
@@ -299,6 +299,7 @@ for decklist_name in decklists:
 
             tts_obj_path = "{}.json".format(decklist_name)
             if tts_obj_path not in os.listdir("."):
+                print("\tMaking TTS Saved Object...")
                 with open(os.path.join(decklist_path, "images/deck_image_urls.txt"), "r") as image_url_file:
                     deck_image_urls = image_url_file.read().split("\n")
 
@@ -307,3 +308,5 @@ for decklist_name in decklists:
                     json.dump(tts_object, tts_json, indent="  ")
 
             os.chdir(decklist_path)
+
+input("Press enter to exit.")
