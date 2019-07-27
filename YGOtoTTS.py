@@ -182,7 +182,7 @@ def make_tts_object(decklist_dict, img_urls):
             "CardID": deck_ids[card_idx]
         } for card_idx, card in enumerate(deck["cards"])]
 
-        if len(deck["cards"]) > 1:
+        if deck_size > 1:
             decks.append({
                 "Name": "DeckCustom",
                 "Transform": transform_base,
@@ -207,8 +207,8 @@ def make_tts_object(decklist_dict, img_urls):
                         "FaceURL": img_urls[deck_idx],
                         # Image of the back of card found in another mod:
                         "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
-                        "NumWidth": 1,
-                        "NumHeight": 1,
+                        "NumWidth": deck_size,
+                        "NumHeight": deck_size,
                     }
                 }
             })
@@ -310,14 +310,19 @@ for decklist_name in decklists:
 
             os.chdir(saved_objects_path)
 
-            tts_obj_path = "{}.json".format(decklist_name)
-            if tts_obj_path not in os.listdir("."):
+            tts_obj_name = "{}.json".format(decklist_name)
+
+            tts_objs_current = []
+            for path, dirs, files in os.walk("."):
+                tts_objs_current.extend(files)
+
+            if tts_obj_name not in tts_objs_current:
                 print("\tMaking TTS Saved Object...")
                 with open(os.path.join(decklist_path, "images/deck_image_urls.txt"), "r") as image_url_file:
                     deck_image_urls = image_url_file.read().split("\n")
 
                 tts_object = make_tts_object(decklist_dict, deck_image_urls)
-                with open(tts_obj_path, "w") as tts_json:
+                with open(tts_obj_name, "w") as tts_json:
                     json.dump(tts_object, tts_json, indent="  ")
 
             os.chdir(decklist_path)
