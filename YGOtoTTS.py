@@ -13,8 +13,6 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# TODO: Have decks less than 2 cards appear as a "Card" object.
-#   (Shouldn't happen often)
 import os
 import requests
 import urllib.request
@@ -184,22 +182,37 @@ def make_tts_object(decklist_dict, img_urls):
             "CardID": deck_ids[card_idx]
         } for card_idx, card in enumerate(deck["cards"])]
 
-        decks.append({
-            "Name": "DeckCustom",
-            "Transform": transform_base,
-            "Nickname": "{} {} Deck".format(decklist_dict["name"], deck["name"].capitalize()),
-            "DeckIDs": deck_ids,
-            "CustomDeck": {
-                str(deck_id): {
-                    "FaceURL": img_urls[deck_idx],
-                    # Image of the back of card found in another mod:
-                    "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
-                    "NumWidth": min(deck_size, 10),
-                    "NumHeight": min(ceil_div(deck_size, 10), 7),
+        if len(deck["cards"]) > 1:
+            decks.append({
+                "Name": "DeckCustom",
+                "Transform": transform_base,
+                "Nickname": "{} {} Deck".format(decklist_dict["name"], deck["name"].capitalize()),
+                "DeckIDs": deck_ids,
+                "CustomDeck": {
+                    str(deck_id): {
+                        "FaceURL": img_urls[deck_idx],
+                        # Image of the back of card found in another mod:
+                        "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
+                        "NumWidth": min(deck_size, 10),
+                        "NumHeight": min(ceil_div(deck_size, 10), 7),
+                    }
+                },
+                "ContainedObjects": cards
+            })
+        else:
+            cards[0].update({
+                "Name": "CardCustom",
+                "CustomDeck": {
+                    str(deck_id): {
+                        "FaceURL": img_urls[deck_idx],
+                        # Image of the back of card found in another mod:
+                        "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
+                        "NumWidth": 1,
+                        "NumHeight": 1,
+                    }
                 }
-            },
-            "ContainedObjects": cards
-        })
+            })
+            decks.append(cards[0])
 
     decklist_tts_obj = {
         "Name": "Bag",
