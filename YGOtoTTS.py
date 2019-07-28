@@ -91,7 +91,7 @@ def make_decklist_dict(ydk_filename, decklist_name):
         card_list = []
 
         for line in ydk_file:
-            stripped = line.rstrip()
+            stripped = line.strip()
 
             if "created by" in stripped:
                 continue
@@ -114,10 +114,16 @@ def make_decklist_dict(ydk_filename, decklist_name):
                 # Stripped must be a card id
                 card_list.append(get_card_info(stripped))
 
+    if len(card_list) != 0:
+        decklist.append({
+            "name": deck_name,
+            "cards": card_list
+        })
+
     decklist_dict = {
-        "name": decklist_name,
-        "decks": decklist
-    }
+            "name": decklist_name,
+            "decks": decklist
+        }
 
     return decklist_dict
 
