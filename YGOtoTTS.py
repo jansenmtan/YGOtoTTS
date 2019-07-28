@@ -109,10 +109,15 @@ def make_decklist_dict(ydk_filename, decklist_name):
 
                 deck_name = stripped[1:]
                 card_list = []
-
             else:
                 # Stripped must be a card id
+                if len(card_list) != 0:
+                    if stripped == card_list[-1]["id"]:
+                        card_list.append(card_list[-1])
+                        continue
+
                 card_list.append(get_card_info(stripped))
+
 
     if len(card_list) != 0:
         decklist.append({
@@ -244,6 +249,7 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
+decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 saved_objects_path = ""
 if sys.platform == "win32":
