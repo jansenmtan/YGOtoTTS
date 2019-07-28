@@ -13,6 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# TODO: Migrate over to anonfiles.com
 import os
 import requests
 import urllib.request
@@ -30,6 +31,11 @@ def get_card_info(card_id):
     response = requests.get("https://db.ygoprodeck.com/api/v5/cardinfo.php?name={}".format(card_id))
     card_info = response.json()
     del response
+
+    # TODO: Implement error handler
+    if 'error' in card_info:
+        print("\t" + card_info["error"])
+        input("\t" + "Press enter to continue...")
 
     # There's only one item in this list
     return card_info[0]
@@ -118,7 +124,6 @@ def make_decklist_dict(ydk_filename, decklist_name):
 
                 card_list.append(get_card_info(stripped))
 
-
     if len(card_list) != 0:
         decklist.append({
             "name": deck_name,
@@ -133,9 +138,9 @@ def make_decklist_dict(ydk_filename, decklist_name):
     return decklist_dict
 
 
-def get_imgur_link(img_path):
+def get_remote_image_link(img_path):
     """
-    Uploads image from disk to imgur anonymously and returns link to image
+    Uploads image from disk to image hosting site anonymously and returns link to image
     :param img_path: Path to image on disk
     :return: img_url - Link to image
     """
@@ -249,6 +254,7 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
+decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 saved_objects_path = ""
 if sys.platform == "win32":
@@ -317,7 +323,7 @@ for decklist_name in decklists:
                 deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
                 with open("deck_image_urls.txt", "w") as image_url_file:
                     for img in deck_image_paths:
-                        image_url_file.writelines(get_imgur_link(img))
+                        image_url_file.writelines(get_remote_image_link(img))
 
             os.chdir(saved_objects_path)
 
