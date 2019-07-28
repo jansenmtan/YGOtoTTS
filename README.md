@@ -32,6 +32,8 @@ Run the program. The deck is ready to spawn in-game in Tabletop Simulator.
 If the image quality is too low, there is an `images` folder in each subfolder which each contain the deck png files.
 They can replace the default imgur link.
 
+If you don't trust the executable, you can build it yourself from the source code.
+
 ## Building
 
 I used pyinstaller to build an executable.
