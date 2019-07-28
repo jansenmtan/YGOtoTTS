@@ -36,11 +36,13 @@ If you don't trust the executable, you can build it yourself from the source cod
 
 ## Building
 
-I used pyinstaller to build an executable.
+I used PyInstaller to build an executable.
 
-See the [pyinstaller quickstart](https://www.pyinstaller.org).
+If you don't have Python, [get it here](https://www.python.org/).
+
+See the [PyInstaller quickstart](https://www.pyinstaller.org).
 
 I recommend using the flag `-F`. For example,
 ```
-pyinstaller -F YGOtoTTS.py
+python -m pyinstaller -F YGOtoTTS.py
 ```
