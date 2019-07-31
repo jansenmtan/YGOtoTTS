@@ -162,7 +162,7 @@ def get_remote_image_link(img_path):
     if response:
         pattern = r"\/t\/.*\{}".format(os.path.splitext(img_path)[1])
         match = re.search(pattern, response.text)
-        img_url = "{}\n".format(match.group(0)[3:])
+        img_url = "https://bayimg.com/{}\n".format(match.group(0)[3:])
     else:
         # I don't know how to properly handle errors
         print(response.text)
