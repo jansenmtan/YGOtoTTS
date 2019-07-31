@@ -19,7 +19,7 @@ import requests
 import urllib.request
 from PIL import Image
 import json
-from base64 import b64encode
+import re
 import sys
 
 
@@ -143,26 +143,27 @@ def get_remote_image_link(img_path):
     :return: img_url - Link to image
     """
 
-    client_id = "8b9d897b9a78e50"
-    url = "https://api.imgur.com/3/image"
-    headers = {"Authorization": "Client-ID {}".format(client_id)}
+    url = "https://bayimg.com/upload"
 
     response = requests.post(
         url,
-        data={
-            "image": b64encode(open(img_path, "rb").read()),
-            "type": "base64"
+        files={
+            "file": open(img_path, "rb")
         },
-        headers=headers
+        data={
+            "code": os.path.basename(img_path)
+        }
     )
 
     img_url = ""
 
     if response:
-        img_url = "{}\n".format(response.json()["data"]["link"])
+        pattern = r"\/t\/.*\{}".format(os.path.splitext(img_path)[1])
+        match = re.search(pattern, response.text)
+        img_url = "{}\n".format(match.group(0)[3:])
     else:
         # I don't know how to properly handle errors
-        print(response.json()["data"]["error"])
+        print(response.text)
 
     del response
 
