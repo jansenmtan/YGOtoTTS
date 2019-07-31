@@ -255,7 +255,6 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
-decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 saved_objects_path = ""
 if sys.platform == "win32":
@@ -302,7 +301,7 @@ for decklist_name in decklists:
                 os.chdir("images")
 
             if "deck_image_urls.txt" not in os.listdir("."):
-                print("\tUploading images to imgur...")
+                print("\tUploading images to remote host...")
 
                 # Current dir is still images
                 deck_image_ext = ".jpg"
@@ -317,7 +316,7 @@ for decklist_name in decklists:
                         deck_image = make_deck_image()
                         os.chdir("..")
                         deck_image.save("{}.png".format(deck["name"]))
-                        deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=65, optimize=True)
+                        deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=95, optimize=True)
 
                 os.chdir(os.path.join(decklist_path, "images"))
 
