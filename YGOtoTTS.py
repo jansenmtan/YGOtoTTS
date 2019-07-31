@@ -299,7 +299,7 @@ def main():
                     os.chdir("images")
 
                 if "deck_image_urls.txt" not in os.listdir("."):
-                    print("\tUploading images to imgur...")
+                    print("\tUploading images to remote host...")
 
                     # Current dir is still images
                     deck_image_ext = ".jpg"
