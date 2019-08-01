@@ -254,7 +254,6 @@ def make_tts_object(decklist_dict, img_urls):
 
 # Is the absolute path of the program/.py file
 decklists_path = os.path.dirname(os.path.realpath(__file__))
-decklists_path = r"C:\Users\Jansen\Documents\Yu-Gi-Oh\Decks"
 
 saved_objects_path = ""
 if sys.platform == "win32":
