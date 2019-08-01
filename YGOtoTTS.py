@@ -306,10 +306,10 @@ for decklist_name in decklists:
                 # Current dir is still images
                 deck_image_ext = ".jpg"
 
-                # Basically just checks if theres a "main.*" if there's a main deck,
-                #   "side.*" if there's a side deck, etc.
-                deck_names = [deck["name"] for deck in decklist_dict["decks"]]
-                if deck_names != [os.path.splitext(filename)[0] for filename in os.listdir(".")]:
+                # Basically just checks if theres a "main_compressed.jpg" if there's a main deck,
+                #   "side_compressed.jpg" if there's a side deck, etc.
+                deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
+                if any([path not in os.listdir(".") for path in deck_image_paths]):
                     # then create them
                     for deck in decklist_dict["decks"]:
                         os.chdir(deck["name"])
@@ -320,7 +320,6 @@ for decklist_name in decklists:
 
                 os.chdir(os.path.join(decklist_path, "images"))
 
-                deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
                 with open("deck_image_urls.txt", "w") as image_url_file:
                     for img in deck_image_paths:
                         image_url_file.writelines(get_remote_image_link(img))
