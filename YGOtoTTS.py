@@ -13,7 +13,6 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# TODO: Migrate over to anonfiles.com
 import os
 import requests
 import urllib.request
