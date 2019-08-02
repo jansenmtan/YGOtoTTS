@@ -32,10 +32,8 @@ def get_card_info(card_id):
     card_info = response.json()
     del response
 
-    # TODO: Implement error handler
     if 'error' in card_info:
-        print("\t" + card_info["error"])
-        input("\t" + "Press enter to continue...")
+        raise Exception("\t" + card_id + ": " + card_info["error"])
 
     # There's only one item in this list
     return card_info[0]
@@ -243,104 +241,111 @@ def make_tts_object(decklist_dict, img_urls):
 
     return tts_object
 
+def main():
+    # TERMINOLOGY:
+    #   A "card" is in a "deck"
+    #   A "deck" is in a "decklist"
+    # Currently, there can be up to 3 decks in a decklist:
+    #   main,
+    #   extra, and
+    #   side.
 
-# TERMINOLOGY:
-#   A "card" is in a "deck"
-#   A "deck" is in a "decklist"
-# Currently, there can be up to 3 decks in a decklist:
-#   main,
-#   extra, and
-#   side.
+    # Is the absolute path of the program/.py file
+    decklists_path = os.path.dirname(os.path.realpath(__file__))
 
-# Is the absolute path of the program/.py file
-decklists_path = os.path.dirname(os.path.realpath(__file__))
+    saved_objects_path = ""
+    if sys.platform == "win32":
+        saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
+    else:
+        err_msg = "This platform is not supported. Please create an issue at https://github.com/jansenmtan/YGOtoTTS/issues.\n"
+        print(err_msg)
+        input("Press enter to continue.")
+        raise Exception(err_msg)
 
-saved_objects_path = ""
-if sys.platform == "win32":
-    saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
-else:
-    err_msg = "This platform is not supported. Please create an issue at https://github.com/jansenmtan/YGOtoTTS/issues.\n"
-    print(err_msg)
-    input("Press enter to continue.")
-    raise Exception(err_msg)
+    os.chdir(decklists_path)
 
-os.chdir(decklists_path)
+    # could implement an asynchronous process to only have to iterate through
+    #   the deck info once, but I am ignorant
+    decklists = [folder for folder in os.listdir(".") if os.path.isdir(folder)]
+    for decklist_name in decklists:
+        decklist_path = os.path.join(decklists_path, decklist_name)
+        os.chdir(decklist_path)
 
-# could implement an asynchronous process to only have to iterate through
-#   the deck info once, but I am ignorant
-decklists = [folder for folder in os.listdir(".") if os.path.isdir(folder)]
-for decklist_name in decklists:
-    decklist_path = os.path.join(decklists_path, decklist_name)
-    os.chdir(decklist_path)
+        dir_list = os.listdir(".")
+        dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
-    dir_list = os.listdir(".")
-    dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
+        print("{}: ".format(decklist_name))
+        for file in dir_list:
+            if file.endswith(".ydk"):
+                decklist_info_name = "decklist_info.json"
+                if decklist_info_name not in dir_list:
+                    print("\tGetting decklist info...".format(decklist_name))
+                    decklist_dict = make_decklist_dict(file, decklist_name)
+                    with open(decklist_info_name, "w") as decklist_info:
+                        json.dump(decklist_dict, decklist_info, indent="  ")
 
-    print("{}: ".format(decklist_name))
-    for file in dir_list:
-        if file.endswith(".ydk"):
-            decklist_info_name = "decklist_info.json"
-            if decklist_info_name not in dir_list:
-                print("\tGetting decklist info...".format(decklist_name))
-                decklist_dict = make_decklist_dict(file, decklist_name)
-                with open(decklist_info_name, "w") as decklist_info:
-                    json.dump(decklist_dict, decklist_info, indent="  ")
+                else:
+                    with open(decklist_info_name, "r") as decklist_info:
+                        decklist_dict = json.load(decklist_info)
 
-            else:
-                with open(decklist_info_name, "r") as decklist_info:
-                    decklist_dict = json.load(decklist_info)
+                if "images" not in dir_list:
+                    print("\tMaking images...")
+                    os.mkdir("images")
+                    os.chdir("images")
+                    get_decklist_images(decklist_dict)
 
-            if "images" not in dir_list:
-                print("\tMaking images...")
-                os.mkdir("images")
-                os.chdir("images")
-                get_decklist_images(decklist_dict)
+                else:
+                    os.chdir("images")
 
-            else:
-                os.chdir("images")
+                if "deck_image_urls.txt" not in os.listdir("."):
+                    print("\tUploading images to imgur...")
 
-            if "deck_image_urls.txt" not in os.listdir("."):
-                print("\tUploading images to imgur...")
+                    # Current dir is still images
+                    deck_image_ext = ".jpg"
 
-                # Current dir is still images
-                deck_image_ext = ".jpg"
+                    # Basically just checks if theres a "main_compressed.jpg" if there's a main deck,
+                    #   "side_compressed.jpg" if there's a side deck, etc.
+                    deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
+                    if any([path not in os.listdir(".") for path in deck_image_paths]):
+                        # then create them
+                        for deck in decklist_dict["decks"]:
+                            os.chdir(deck["name"])
+                            deck_image = make_deck_image()
+                            os.chdir("..")
+                            deck_image.save("{}.png".format(deck["name"]))
+                            deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=65, optimize=True)
 
-                # Basically just checks if theres a "main_compressed.jpg" if there's a main deck,
-                #   "side_compressed.jpg" if there's a side deck, etc.
-                deck_image_paths = ["{}_compressed{}".format(deck["name"], deck_image_ext) for deck in decklist_dict["decks"]]
-                if any([path not in os.listdir(".") for path in deck_image_paths]):
-                    # then create them
-                    for deck in decklist_dict["decks"]:
-                        os.chdir(deck["name"])
-                        deck_image = make_deck_image()
-                        os.chdir("..")
-                        deck_image.save("{}.png".format(deck["name"]))
-                        deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=65, optimize=True)
+                    os.chdir(os.path.join(decklist_path, "images"))
 
-                os.chdir(os.path.join(decklist_path, "images"))
+                    with open("deck_image_urls.txt", "w") as image_url_file:
+                        for img in deck_image_paths:
+                            image_url_file.writelines(get_remote_image_link(img))
 
-                with open("deck_image_urls.txt", "w") as image_url_file:
-                    for img in deck_image_paths:
-                        image_url_file.writelines(get_remote_image_link(img))
+                os.chdir(saved_objects_path)
 
-            os.chdir(saved_objects_path)
+                tts_obj_name = "{}.json".format(decklist_name)
 
-            tts_obj_name = "{}.json".format(decklist_name)
+                tts_objs_current = []
+                for path, dirs, files in os.walk("."):
+                    tts_objs_current.extend(files)
 
-            tts_objs_current = []
-            for path, dirs, files in os.walk("."):
-                tts_objs_current.extend(files)
+                if tts_obj_name not in tts_objs_current:
+                    print("\tMaking TTS Saved Object...")
+                    with open(os.path.join(decklist_path, "images/deck_image_urls.txt"), "r") as image_url_file:
+                        deck_image_urls = image_url_file.read().split("\n")
 
-            if tts_obj_name not in tts_objs_current:
-                print("\tMaking TTS Saved Object...")
-                with open(os.path.join(decklist_path, "images/deck_image_urls.txt"), "r") as image_url_file:
-                    deck_image_urls = image_url_file.read().split("\n")
+                    tts_object = make_tts_object(decklist_dict, deck_image_urls)
+                    with open(tts_obj_name, "w") as tts_json:
+                        json.dump(tts_object, tts_json, indent="  ")
 
-                tts_object = make_tts_object(decklist_dict, deck_image_urls)
-                with open(tts_obj_name, "w") as tts_json:
-                    json.dump(tts_object, tts_json, indent="  ")
+                os.chdir(decklist_path)
+                print("\tDone.\n")
 
-            os.chdir(decklist_path)
-            print("\tDone.\n")
 
-input("Press enter to exit.")
+if __name__ == '__main__':
+    try:
+        main()
+    except:
+        print(Exception)
+
+    input("Press enter to exit.")
