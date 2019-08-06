@@ -143,14 +143,16 @@ def get_remote_image_link(img_path):
     """
 
     url = "https://bayimg.com/upload"
+    file = open(img_path, "rb")
+    code = os.path.basename(img_path)
 
     response = requests.post(
         url,
         files={
-            "file": open(img_path, "rb")
+            "file": file
         },
         data={
-            "code": os.path.basename(img_path)
+            "code": code
         }
     )
 
@@ -241,6 +243,7 @@ def make_tts_object(decklist_dict, img_urls):
 
     return tts_object
 
+
 def main():
     # TERMINOLOGY:
     #   A "card" is in a "deck"
@@ -294,8 +297,7 @@ def main():
                     os.chdir("images")
                     get_decklist_images(decklist_dict)
 
-                else:
-                    os.chdir("images")
+                os.chdir(os.path.join(decklist_path, "images"))
 
                 if "deck_image_urls.txt" not in os.listdir("."):
                     print("\tUploading images to remote host...")
@@ -313,7 +315,7 @@ def main():
                             deck_image = make_deck_image()
                             os.chdir("..")
                             deck_image.save("{}.png".format(deck["name"]))
-                            deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=65, optimize=True)
+                            deck_image.save("{}_compressed{}".format(deck["name"], deck_image_ext), quality=95, optimize=True)
 
                     os.chdir(os.path.join(decklist_path, "images"))
 
@@ -345,7 +347,7 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except:
-        print(Exception)
+    except Exception as exception:
+        print(exception)
 
     input("Press enter to exit.")
