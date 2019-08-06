@@ -213,6 +213,7 @@ def make_tts_object(decklist_dict, img_urls):
                         "NumHeight": min(ceil_div(deck_size, 10), 7),
                     }
                 },
+                "HideWhenFaceDown": True,
                 "ContainedObjects": cards
             })
         else:
