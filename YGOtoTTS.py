@@ -48,6 +48,9 @@ def get_decklist_images(decklist_dict, extension=".jpg"):
     # Current dir is images
     card_index = 0
 
+    # Assuming most cards have this size
+    card_size = (421, 614)
+
     for deck in decklist_dict["decks"]:
         # Current dir is images
         os.mkdir(deck["name"])
@@ -55,6 +58,8 @@ def get_decklist_images(decklist_dict, extension=".jpg"):
 
         for card in deck["cards"]:
             get_card_image(card, "{}".format(card_index), extension=extension)
+            card_image = Image.open("{}{}".format(card_index, extension))
+            card_image.resize(card_size, Image.LANCZOS)
             card_index += 1
 
         os.chdir("..")
