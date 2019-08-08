@@ -32,7 +32,8 @@ def get_card_info(card_id):
     del response
 
     if 'error' in card_info:
-        raise Exception("\t" + card_id + ": " + card_info["error"])
+        print("\t" + card_id + ": " + card_info["error"])
+        print("\tSkipping card " + card_id)
 
     # There's only one item in this list
     return card_info[0]
@@ -124,7 +125,9 @@ def make_decklist_dict(ydk_filename, decklist_name):
                         card_list.append(card_list[-1])
                         continue
 
-                card_list.append(get_card_info(stripped))
+                card_info = get_card_info(stripped)
+                if "error" not in card_info:
+                    card_list.append(card_info)
 
     if len(card_list) != 0:
         decklist.append({
