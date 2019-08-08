@@ -217,9 +217,9 @@ def make_tts_object(decklist_dict, img_urls):
                         "BackURL": "http://cloud-3.steamusercontent.com/ugc/925921299334738938/83EE3D4F457FE0CD9251F7318E9FE6CAC92D6FF9/",
                         "NumWidth": min(deck_size, 10),
                         "NumHeight": min(ceil_div(deck_size, 10), 7),
+                        "BackIsHidden": True,
                     }
                 },
-                "HideWhenFaceDown": True,
                 "ContainedObjects": cards
             })
         else:
