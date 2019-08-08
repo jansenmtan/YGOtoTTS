@@ -157,7 +157,8 @@ def get_remote_image_link(img_path):
             "file": file
         },
         data={
-            "code": code
+            "code": code,
+            "tags": "yugioh"
         }
     )
 
