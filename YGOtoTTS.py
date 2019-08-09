@@ -13,6 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# TODO: Auto-update the executable/script
 import os
 import requests
 import urllib.request
@@ -34,6 +35,7 @@ def get_card_info(card_id):
     if 'error' in card_info:
         print("\t" + card_id + ": " + card_info["error"])
         print("\tSkipping card " + card_id)
+        return card_info
 
     # There's only one item in this list
     return card_info[0]
