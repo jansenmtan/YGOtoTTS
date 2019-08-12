@@ -13,14 +13,16 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# TODO: Auto-update the executable/script
 import os
-import requests
 import urllib.request
-from PIL import Image
 import json
 import re
 import sys
+
+from PIL import Image
+import requests
+
+from YGOtoTTS import updater
 
 
 def ceil_div(a, b):
@@ -357,6 +359,8 @@ def main():
 
 
 if __name__ == '__main__':
+    updater.update_app()
+
     try:
         main()
     except Exception as exception:
