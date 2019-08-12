@@ -14,11 +14,11 @@ Your directory should look like this:
 ```
 general yu-gi-oh folder
 |
-├── sub folder
-|   └── your favorite deck.ydk
+├── Name of some deck
+|   └── some file.ydk
 |
-├── other sub folder
-|   └── meta deck.ydk
+├── Name of other deck
+|   └── other file.ydk
 |
 ├── YGOtoTTS program
 |
@@ -29,8 +29,8 @@ general yu-gi-oh folder
 
 Run the program. The deck is ready to spawn in-game in Tabletop Simulator.
 
-If the image quality is too low, there is an `images` folder in each subfolder which each contain the deck png files.
-They can replace the default imgur link.
+If the images are taking too long to upload (program stuck on `Uploading images to remote host...`),
+you can insert your own image links at this file: `images/deck_image_urls.txt`
 
 If you don't trust the executable, you can build it yourself from the source code.
 

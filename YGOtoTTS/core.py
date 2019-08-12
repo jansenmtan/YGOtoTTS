@@ -13,6 +13,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# TODO: Make it easier to use custom img links when bayimg takes too long
 import os
 import urllib.request
 import json
