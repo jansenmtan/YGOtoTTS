@@ -1,1 +1,1 @@
-__version__ = "v1.5-bayimg"
+__version__ = "v1.6-bayimg"
