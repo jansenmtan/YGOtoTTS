@@ -276,8 +276,6 @@ def main():
         saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
     else:
         err_msg = "This platform is not supported. Please create an issue at https://github.com/jansenmtan/YGOtoTTS/issues.\n"
-        print(err_msg)
-        input("Press enter to continue.")
         raise Exception(err_msg)
 
     os.chdir(decklists_path)
