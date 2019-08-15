@@ -292,7 +292,6 @@ def main():
         os.chdir(decklist_path)
 
         dir_list = os.listdir(".")
-        dir_exts_list = [os.path.splitext(filename)[1] for filename in dir_list]
 
         print("{}: ".format(decklist_name))
         for file in dir_list:
