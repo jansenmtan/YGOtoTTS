@@ -274,7 +274,7 @@ def main():
     saved_objects_path = ""
     if sys.platform == "win32":
         saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
-    elif "linux" in sys.platform:
+    elif sys.platform.startswith("linux"):
         saved_objects_path = os.path.expanduser("~/.local/share/Tabletop Simulator/Saves/Saved Objects")
     elif sys.platform == "darwin":
         saved_objects_path = os.path.expanduser("~/.local/share/Tabletop Simulator/Saves/Saved Objects")

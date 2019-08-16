@@ -44,5 +44,11 @@ See the [PyInstaller quickstart](https://www.pyinstaller.org).
 
 I recommend using the flag `-F`. For example,
 ```
-python -m pyinstaller -F YGOtoTTS.py
+python3 -m pyinstaller -F YGOtoTTS/core.py
 ```
+
+If you plan on distributing your binary, you must format it in the following:
+```
+[name]-[platform]
+```
+where the platform is specified here: https://docs.python.org/3.7/library/sys.html#sys.platform
