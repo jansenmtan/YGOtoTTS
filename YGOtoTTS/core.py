@@ -273,7 +273,11 @@ def main():
 
     saved_objects_path = ""
     if sys.platform == "win32":
-        saved_objects_path = os.path.expanduser("~/Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
+        saved_objects_path_base = os.path.expanduser("~/{}Documents/My Games/Tabletop Simulator/Saves/Saved Objects")
+        if os.path.exists(saved_objects_path_base.format("OneDrive/")):
+            saved_objects_path = saved_objects_path_base.format("OneDrive/")
+        else:
+            saved_objects_path = saved_objects_path_base.format("")
     elif sys.platform.startswith("linux"):
         saved_objects_path = os.path.expanduser("~/.local/share/Tabletop Simulator/Saves/Saved Objects")
     elif sys.platform == "darwin":
