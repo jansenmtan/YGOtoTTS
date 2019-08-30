@@ -365,7 +365,13 @@ def main():
 
 
 if __name__ == '__main__':
-    updater.update_app()
+    # I don't really want to import argparse
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "-d":
+            # Delete old executable
+            os.remove(sys.argv[2])
+    elif len(sys.argv) == 1:
+        updater.update_app(sys.executable)
 
     try:
         main()
