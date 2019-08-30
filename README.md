@@ -30,7 +30,7 @@ general yu-gi-oh folder
 Run the program. The deck is ready to spawn in-game in Tabletop Simulator.
 
 If the images are taking too long to upload (program stuck on `Uploading images to remote host...`),
-you can insert your own image links at this file: `images/deck_image_urls.txt`
+you can insert your own direct image links at this file: `images/deck_image_urls.txt`
 
 If you don't trust the executable, you can build it yourself from the source code.
 
@@ -40,14 +40,13 @@ I used PyInstaller to build an executable.
 
 If you don't have Python, [get it here](https://www.python.org/).
 
-See the [PyInstaller quickstart](https://www.pyinstaller.org).
+There are build scripts in the root directory. 
+If you're on Windows, run `build.bat`. 
+If you're on macOS or Linux, run `build.sh`.
 
-I recommend using the flag `-F`. For example,
-```
-python3 -m pyinstaller -F YGOtoTTS/core.py
-```
+The executable will be at the folder `dist/`
 
-If you plan on distributing your binary, you must format it in the following:
+If you plan on distributing your binary, you should format it like so:
 ```
 [name]-[platform]
 ```
