@@ -110,7 +110,7 @@ def make_decklist_dict(ydk_filename, decklist_name):
             if "created by" in stripped:
                 continue
 
-            if not stripped.isnumeric():
+            if "#" in stripped or "!" in stripped:
                 # Stripped must be a separate deck (main, extra, side, etc)
 
                 if len(card_list) != 0:
@@ -123,8 +123,9 @@ def make_decklist_dict(ydk_filename, decklist_name):
 
                 deck_name = stripped[1:]
                 card_list = []
-            else:
+            elif stripped.isnumeric():
                 # Stripped must be a card id
+                # Check if card is a duplicate, if so, then just copy the dupe
                 if len(card_list) != 0:
                     if stripped == card_list[-1]["id"]:
                         card_list.append(card_list[-1])
