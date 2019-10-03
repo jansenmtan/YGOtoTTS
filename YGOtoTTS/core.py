@@ -282,7 +282,7 @@ def main():
     elif sys.platform.startswith("linux"):
         saved_objects_path = os.path.expanduser("~/.local/share/Tabletop Simulator/Saves/Saved Objects")
     elif sys.platform == "darwin":
-        saved_objects_path = os.path.expanduser("~/.local/share/Tabletop Simulator/Saves/Saved Objects")
+        saved_objects_path = os.path.expanduser("~/Library/Tabletop Simulator/Saves/Saved Objects")
     else:
         err_msg = "This platform is not supported. Please create an issue at https://github.com/jansenmtan/YGOtoTTS/issues.\n"
         raise Exception(err_msg)
