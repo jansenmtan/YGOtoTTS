@@ -270,7 +270,7 @@ def main():
     #   side.
 
     # Is the absolute path of the program/.py file
-    decklists_path = os.path.dirname(os.path.realpath(__file__))
+    decklists_path = os.getcwd()
 
     saved_objects_path = ""
     if sys.platform == "win32":
