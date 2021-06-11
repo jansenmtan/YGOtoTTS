@@ -31,7 +31,7 @@ def ceil_div(a, b):
 
 
 def get_card_info(card_id):
-    response = requests.get("https://db.ygoprodeck.com/api/v5/cardinfo.php?name={}".format(card_id))
+    response = requests.get("https://db.ygoprodeck.com/api/v7/cardinfo.php?id={}".format(card_id))
     card_info = response.json()
     del response
 
@@ -41,7 +41,7 @@ def get_card_info(card_id):
         return card_info
 
     # There's only one item in this list
-    return card_info[0]
+    return card_info['data'][0]
 
 
 def get_card_image(card_info, filename, extension=".jpg"):
