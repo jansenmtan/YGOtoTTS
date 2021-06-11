@@ -1,2 +1,2 @@
 # TODO: fix: Increment version
-__version__ = "v1.6.4-bayimg"
+__version__ = "v1.7.0-bayimg"
