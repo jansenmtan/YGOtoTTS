@@ -1,0 +1,38 @@
+name: Build release
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  windows-release:
+    name: create Windows release
+    runs-on: windows-latest
+    steps:
+    - name: checkout code
+      uses: actions/checkout@v2
+    - name: build artifacts
+      run: build.bat
+      shell: cmd
+      id: build
+    - name: create release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        draft: false
+        prerelease: false
+        release_name: YGOtoTTS ${{ github.ref }}
+        tag_name: ${{ github.ref }}
+    - name: upload artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url}}
+        asset_path: './dist/YGOtoTTS*-win32.exe'
+        asset_name: 'YGOtoTTS-win32.exe'
+        asset_content_type: application/x-ms-dos-executable
+   
