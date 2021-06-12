@@ -10,8 +10,9 @@ jobs:
   windows-release:
     name: create Windows release
     runs-on: windows-latest
-
     steps:
+    - name: checkout code
+      uses: actions/checkout@v2
     - name: build artifacts
       run: build.bat
       shell: cmd
