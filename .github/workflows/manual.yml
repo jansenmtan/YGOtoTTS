@@ -1,0 +1,16 @@
+name: Build release
+
+
+on:
+  push:
+    branches:
+    - release/*
+
+jobs:
+  build:
+    name: build Windows release
+    runs-on: windows-latest
+
+    steps:
+    - name: run build script
+      run: build.bat
