@@ -4,7 +4,8 @@ name: Build release
 on:
   push:
     tags:
-    - v*
+    - v1.*
+    - v1.*.*
 
 jobs:
   build:
