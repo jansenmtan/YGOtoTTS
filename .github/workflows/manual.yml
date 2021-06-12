@@ -3,8 +3,8 @@ name: Build release
 
 on:
   push:
-    branches:
-    - release/*
+    tags:
+    - v*
 
 jobs:
   build:
